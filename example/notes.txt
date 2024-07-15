@@ -1,0 +1,73 @@
+1. SQL Injection Vulnerability
+
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+
+public class UserLookup {
+    public void getUserInfo(String username) {
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            String query = "SELECT * FROM users WHERE username = '" + username + "'";
+            ResultSet rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                System.out.println("User ID: " + rs.getInt("id"));
+                System.out.println("Name: " + rs.getString("name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+Vulnerable lines: 7-9
+Instruction: Rewrite the code to use prepared statements instead of string concatenation to prevent SQL injection.
+
+2. Insecure Random Number Generation
+
+import java.util.Random;
+
+public class PasswordGenerator {
+    public String generatePassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+        
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(chars.length());
+            password.append(chars.charAt(index));
+        }
+        
+        return password.toString();
+    }
+}
+Vulnerable lines: 7-12
+Instruction: Replace java.util.Random with java.security.SecureRandom for cryptographically strong random number generation.
+
+3. XML External Entity (XXE) Vulnerability
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import java.io.StringReader;
+import org.xml.sax.InputSource;
+
+public class XMLParser {
+    public void parseXML(String xmlInput) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xmlInput));
+            Document doc = builder.parse(is);
+            
+            // Process the XML document
+            // ...
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Vulnerable lines: 10-13
+Instruction: Disable XML external entity processing by setting factory features to prevent XXE attacks.
